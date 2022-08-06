@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 
 router = APIRouter(
     prefix="/users",
@@ -7,6 +7,6 @@ router = APIRouter(
 )
 
 
-@router.get("", status_code=200)
+@router.get("", status_code=status.HTTP_200_OK)
 def get_all_users():
     return {"users": ["user1", "user2"]}

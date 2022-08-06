@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, status
 
 from app.schema.post import PostResponse, PostBase, AllPostResponse
 
@@ -33,7 +33,7 @@ router = APIRouter(
 
 @router.get(
     "",
-    status_code= 200,
+    status_code= status.HTTP_200_OK,
     response_model= AllPostResponse,
     description="Get All post"
 )
@@ -43,7 +43,7 @@ def get_all_posts():
 
 @router.get(
     "/{id}", 
-    status_code=200,
+    status_code=status.HTTP_200_OK,
     response_model= PostResponse,
     description="Get post by id"
 )
@@ -58,7 +58,7 @@ def get_post(id: int):
 
 @router.post(
     "",
-    status_code=201,
+    status_code=status.HTTP_201_CREATED,
     response_model= PostResponse,
     description="Create Post"
 )
@@ -70,7 +70,7 @@ def create_post(
 
 @router.put(
     "/{id}",
-    status_code=201,
+    status_code=status.HTTP_201_CREATED,
     response_model=PostResponse,
     description="Update post details"
 )
@@ -83,7 +83,7 @@ def update_post(
 
 @router.delete(
     "/{id}",
-    status_code=204,
+    status_code=status.HTTP_204_NO_CONTENT,
     response_model="",
     description="delete post"
 )
