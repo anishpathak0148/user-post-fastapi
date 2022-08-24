@@ -1,12 +1,24 @@
 import time
+from . import models
 from typing import Union
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from app.database import engine, SessionLocal
 from app.api.user import router as user_router
 from app.api.post import router as post_router
 
 app = FastAPI()
+
+models.Base.metadata.create_all(bind=engine)
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 origins = [
     "http://localhost",
