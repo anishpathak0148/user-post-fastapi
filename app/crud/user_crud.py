@@ -1,6 +1,7 @@
 from asyncio.log import logger
 from sqlalchemy.orm import Session
 from app import models
+from app.helper.utils import get_hashed_password
 from app.schema import user as user_schema
 
 
@@ -21,7 +22,7 @@ def get_users(db: Session, offset: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: user_schema.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
+    fake_hashed_password = get_hashed_password(user.password)
     db_user = models.User(name = user.name, email=user.email, hashed_password=fake_hashed_password)
     db.add(db_user)
     db.commit()
