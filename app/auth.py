@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import Union
 
@@ -11,11 +13,13 @@ from app.schema.user import User
 from app.schema.auth_schema import Token, TokenData
 from app.crud import user_crud
 
+load_dotenv()
+
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "2602b507dd020566a6eb38a1d0c331e09cec1fe3a918024d7d404e6d37a59f24"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
@@ -61,7 +65,8 @@ async def get_current_user(
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except JWTError:
+    except JWTError as e:
+        logger.info(f"got exception due to: {e}")
         raise credentials_exception
     user_dict = user_crud.get_user_by_email(db=db, email=token_data.username)
     if user_dict is None:
@@ -88,10 +93,11 @@ async def login(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes= int(ACCESS_TOKEN_EXPIRE_MINUTES))
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
+    print(f"Generated access token for user: {user.email} is: {access_token}")
     return {"access_token": access_token, "token_type": "bearer"}
 
 
