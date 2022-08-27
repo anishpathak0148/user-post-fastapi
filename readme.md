@@ -3,3 +3,6 @@
 
 ## To start the server:
     uvicorn app.main:app --reload
+
+## To generate a secure random secret key:
+    openssl rand -hex 32

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.crud import user_crud
 from app.schema import user as user_schema
+from app.auth import get_current_active_user
 
 router = APIRouter(
     prefix="/users",
@@ -48,7 +49,7 @@ def create_user(
 ):
     db_user = user_crud.get_user_by_email(db, email=user.email)
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
     return user_crud.create_user(db=db, user=user)
 
 
@@ -57,9 +58,10 @@ def create_user(
 def update_user_details(
     id: int,
     user: user_schema.UserCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: user_schema.User = Depends(get_current_active_user)
 ):
     db_user = user_crud.get_user(db, user_id=id)
     if db_user is None:
-        raise HTTPException(status_code=404, detail="User Not Found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User Not Found")
     return user_crud.update_user(db=db, user_id=id, user=user)
