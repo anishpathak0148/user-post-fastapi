@@ -3,8 +3,10 @@ from typing import List
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
+from app.auth import get_current_active_user
 from app.crud import post_crud
 from app.crud import user_crud
+from app.schema.user import User
 
 from app.schema.post import Post, PostResponse, PostBase, AllPostResponse
 
@@ -54,10 +56,11 @@ def get_post(
     description="Create Post"
 )
 def create_post(
-    user_id: int,
     payload: PostBase,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
+    user_id = current_user.id
     user_data = user_crud.get_user(db=db, user_id=user_id)
     if user_data is None:
         raise HTTPException(
@@ -77,7 +80,8 @@ def create_post(
 def update_post(
     id: int,
     payload: PostBase,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     post_data = post_crud.get_post_by_id(db, id)
     if post_data is None:
@@ -97,7 +101,8 @@ def update_post(
 )
 def delete_post(
     id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
 ):
     post_data = post_crud.get_post_by_id(db, id)
     if post_data is None:

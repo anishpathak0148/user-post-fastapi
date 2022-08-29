@@ -35,7 +35,7 @@ def update_user(db: Session, user_id: int, user: user_schema.UserCreate):
         return None
     db_user.name = user.name
     db_user.email = user.email
-    db_user.hashed_password = user.password + "notreallyhashed"
+    db_user.hashed_password = get_hashed_password(user.password)
     # db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
     db.add(db_user)
     db.commit()
