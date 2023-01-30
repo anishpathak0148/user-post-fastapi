@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  api:
+    image: 79769827852732/user-post-fastapi:${TAG}
+    build: .
+    volumes:
+      - .:/code
+    container_name: user-post-fastapi
+    environment:
+      SECRET_KEY: "${SECRET_KEY}"
+      ALGORITHM: "${ALGORITHM}"
+      ACCESS_TOKEN_EXPIRE_MINUTES: "${ACCESS_TOKEN_EXPIRE_MINUTES}"
+    # command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+    ports:
+      - "8080:8080"
