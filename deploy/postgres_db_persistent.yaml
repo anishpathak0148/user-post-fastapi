@@ -8,12 +8,12 @@ metadata:
     type: local
 spec:
   capacity:
-    storage: 1Gi
-  storageClassName: standard
+    storage: 2Gi
+  storageClassName: manual
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   hostPath:
-    path: "/data/postgres-db-pv"
+    path: "/var/lib/data"
 
 ---
 
@@ -28,9 +28,9 @@ metadata:
     type: local
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 1Gi
+      storage: 2Gi
   volumeName: postgres-db-pv
-  storageClassName: standard
+  storageClassName: manual
