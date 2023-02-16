@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-post-fastapi-service
+  labels:
+    app: user-post-fastapi
+  namespace: default
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      nodePort: 30007
+  selector:
+    name: user-post-fastapi-pod
+  sessionAffinity: None
+  type: NodePort
