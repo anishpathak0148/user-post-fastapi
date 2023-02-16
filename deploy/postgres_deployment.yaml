@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    name: postgres
+    app: user-post-fastapi
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: postgres
+      app: user-post-fastapi
+  template:
+    metadata:
+      labels:
+        name: postgres
+        app: user-post-fastapi
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:13-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          # value: postgres
+          valueFrom:
+            secretKeyRef:
+              name: user-post-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          # value: postgres_password
+          valueFrom:
+            secretKeyRef:
+              name: user-post-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: user-post-config
+              key: POSTGRES_DB
+        volumeMounts:
+          - name: postgres-db-volume-mount
+            mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-db-volume-mount
+        persistentVolumeClaim:
+          claimName: postgres-db-pvc
+      restartPolicy: Always
