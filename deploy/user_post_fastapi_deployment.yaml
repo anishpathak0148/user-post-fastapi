@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: user-post-fastapi
-        image: gcr.io/avian-mystery-373417/user-post-fastapi:v1.1
+        image: gcr.io/avian-mystery-373417/user-post-fastapi:v1.5
         ports:
         - containerPort: 8080
         env:

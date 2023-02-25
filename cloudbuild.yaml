@@ -25,37 +25,8 @@ steps:
     args: ['push', 'gcr.io/${_PROJECT_ID}/${_CONTAINER_NAME}:${_VERSION}']
     id: 'push-image-to-container-registry'
     waitFor: ['build-image-myapp-docker-compose']
-  
-  # Run the image on Cloud Run
-  # - name: 'gcr.io/cloud-builders/gcloud'
-  #   args:
-  #   - 'run'
-  #   - 'deploy'
-  #   - '${_SERVICE_NAME}'
-  #   - '--image'
-  #   - 'gcr.io/${_PROJECT_ID}/${_CONTAINER_NAME}:${_VERSION}'
-  #   - '--region'
-  #   - '${_REGION}'
-  #   - '--port'
-  #   - '${_CONTAINER_PORT}'
-  #   - '--platform'
-  #   - 'managed'
-  #   - '--allow-unauthenticated'
-  #   env:
-  #   - 'PROJECT_ID=${_PROJECT_ID}'
-  #   - 'CONTAINER_NAME=${_CONTAINER_NAME}'
-  #   - 'TAG=${_VERSION}'
-  #   - 'SECRET_KEY=${_SECRET_KEY}'
-  #   - 'ALGORITHM=${_ALGORITHM}'
-  #   - 'ACCESS_TOKEN_EXPIRE_MINUTES=${_ACCESS_TOKEN_EXPIRE_MINUTES}'
-  #   - 'POSTGRES_USER=${_POSTGRES_USER}'
-  #   - 'POSTGRES_PASSWORD=${_POSTGRES_PASSWORD}'
-  #   - 'POSTGRES_DB=${_POSTGRES_DB}'
-  #   - 'POSTGRES_SERVER=${_POSTGRES_SERVER}'
-  #   waitFor: ['push-image-to-container-registry']
-  #   id: 'deploy-to-cloud-run'
 
-  # deploy container image to GKE
+  # deploy container image to GKE Cluster
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
     - run
@@ -72,7 +43,7 @@ steps:
   #   - 'set'
   #   - 'image'
   #   - 'deployment/${_DEPLOYMENT_NAME}'
-  #   - '${_CONTAINER_NAME}=gcr.io/${_PROJECT}/${_CONTAINER_NAME}:${_VERSION}'
+  #   - '${_CONTAINER_NAME}=gcr.io/${_PROJECT_ID}/${_CONTAINER_NAME}:${_VERSION}'
   #   env:
   #   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
   #   - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
@@ -89,13 +60,13 @@ substitutions:
   _GKE_CLUSTER: user-post-cluster-dev
 
   #Repository Specific configuration. DevOps can change this settings
-  _DEPLOYMENT_NAME: user-post-fastapi
+  _DEPLOYMENT_NAME: user-post-fastapi-deployment
   _CONTAINER_NAME: user-post-fastapi
   _SERVICE_NAME: user-post-fastapi-service
   _CONTAINER_PORT: '8080'
   
   # Developers ONLY change
-  _VERSION: v1.1
+  _VERSION: v1.5
     
 options:
     substitution_option: 'ALLOW_LOOSE'
