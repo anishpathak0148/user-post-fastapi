@@ -16,8 +16,8 @@ spec:
         name: user-post-fastapi-pod
     spec:
       containers:
-      - name: ${CONTAINER_NAME}
-        image: gcr.io/${PROJECT_ID}/${CONTAINER_NAME}:${TAG}
+      - name: user-post-fastapi
+        image: gcr.io/avian-mystery-373417/user-post-fastapi:v1.1
         ports:
         - containerPort: 8080
         env:

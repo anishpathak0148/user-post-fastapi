@@ -63,10 +63,6 @@ steps:
     - --image=gcr.io/${_PROJECT_ID}/${_CONTAINER_NAME}:${_VERSION}
     - --location=${_ZONE}
     - --cluster=${_GKE_CLUSTER}
-    env:
-    - 'PROJECT_ID=${_PROJECT_ID}'
-    - 'CONTAINER_NAME=${_CONTAINER_NAME}'
-    - 'TAG=${_VERSION}'
     id: 'deploy-to-GKE-cluster'
     waitFor: ['push-image-to-container-registry']
 
