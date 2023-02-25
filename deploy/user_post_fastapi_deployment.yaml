@@ -16,19 +16,12 @@ spec:
         name: user-post-fastapi-pod
     spec:
       containers:
-      - name: user-post-fastapi
-        image: 79769827852732/user-post-fastapi:1.0.6
+      - name: ${CONTAINER_NAME}
+        image: gcr.io/${PROJECT_ID}/${CONTAINER_NAME}:${TAG}
         ports:
         - containerPort: 8080
         env:
-        # - name: DATABASE_URL
-        #   # value: postgresql://userPostgres:passwordPostgres@db:5432/user_post_db
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: user-post-secret
-        #       key: DATABASE_URL
         - name: POSTGRES_USER
-          # value: postgres
           valueFrom:
             secretKeyRef:
               name: user-post-secret

@@ -27,33 +27,61 @@ steps:
     waitFor: ['build-image-myapp-docker-compose']
   
   # Run the image on Cloud Run
-  - name: 'gcr.io/cloud-builders/gcloud'
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   args:
+  #   - 'run'
+  #   - 'deploy'
+  #   - '${_SERVICE_NAME}'
+  #   - '--image'
+  #   - 'gcr.io/${_PROJECT_ID}/${_CONTAINER_NAME}:${_VERSION}'
+  #   - '--region'
+  #   - '${_REGION}'
+  #   - '--port'
+  #   - '${_CONTAINER_PORT}'
+  #   - '--platform'
+  #   - 'managed'
+  #   - '--allow-unauthenticated'
+  #   env:
+  #   - 'PROJECT_ID=${_PROJECT_ID}'
+  #   - 'CONTAINER_NAME=${_CONTAINER_NAME}'
+  #   - 'TAG=${_VERSION}'
+  #   - 'SECRET_KEY=${_SECRET_KEY}'
+  #   - 'ALGORITHM=${_ALGORITHM}'
+  #   - 'ACCESS_TOKEN_EXPIRE_MINUTES=${_ACCESS_TOKEN_EXPIRE_MINUTES}'
+  #   - 'POSTGRES_USER=${_POSTGRES_USER}'
+  #   - 'POSTGRES_PASSWORD=${_POSTGRES_PASSWORD}'
+  #   - 'POSTGRES_DB=${_POSTGRES_DB}'
+  #   - 'POSTGRES_SERVER=${_POSTGRES_SERVER}'
+  #   waitFor: ['push-image-to-container-registry']
+  #   id: 'deploy-to-cloud-run'
+
+  # deploy container image to GKE
+  - name: "gcr.io/cloud-builders/gke-deploy"
     args:
-    - 'run'
-    - 'deploy'
-    - '${_SERVICE_NAME}'
-    - '--image'
-    - 'gcr.io/${_PROJECT_ID}/${_CONTAINER_NAME}:${_VERSION}'
-    - '--region'
-    - '${_REGION}'
-    - '--port'
-    - '${_CONTAINER_PORT}'
-    - '--platform'
-    - 'managed'
-    - '--allow-unauthenticated'
+    - run
+    - --filename=./deploy/
+    - --image=gcr.io/${_PROJECT_ID}/${_CONTAINER_NAME}:${_VERSION}
+    - --location=${_ZONE}
+    - --cluster=${_GKE_CLUSTER}
     env:
     - 'PROJECT_ID=${_PROJECT_ID}'
     - 'CONTAINER_NAME=${_CONTAINER_NAME}'
     - 'TAG=${_VERSION}'
-    - 'SECRET_KEY=${_SECRET_KEY}'
-    - 'ALGORITHM=${_ALGORITHM}'
-    - 'ACCESS_TOKEN_EXPIRE_MINUTES=${_ACCESS_TOKEN_EXPIRE_MINUTES}'
-    - 'POSTGRES_USER=${_POSTGRES_USER}'
-    - 'POSTGRES_PASSWORD=${_POSTGRES_PASSWORD}'
-    - 'POSTGRES_DB=${_POSTGRES_DB}'
-    - 'POSTGRES_SERVER=${_POSTGRES_SERVER}'
+    id: 'deploy-to-GKE-cluster'
     waitFor: ['push-image-to-container-registry']
-    id: 'deploy-to-cloud-run'
+
+  #Update the container image using kubectl set
+  # - name: 'gcr.io/cloud-builders/kubectl'
+  #   args:
+  #   - 'set'
+  #   - 'image'
+  #   - 'deployment/${_DEPLOYMENT_NAME}'
+  #   - '${_CONTAINER_NAME}=gcr.io/${_PROJECT}/${_CONTAINER_NAME}:${_VERSION}'
+  #   env:
+  #   - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
+  #   - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+  #   id: 'deploy-latest-image-to-GKE-cluster'
+  #   waitFor: ['push-image-to-container-registry']
   
 substitutions:
   #GCP Specific configuration. Please DON'T change anything
@@ -62,6 +90,7 @@ substitutions:
   _PROJECT_ID: $PROJECT_ID # It will pick the current project id
   _ZONE: us-central1-c
   _REGION: US-central1
+  _GKE_CLUSTER: user-post-cluster-dev
 
   #Repository Specific configuration. DevOps can change this settings
   _DEPLOYMENT_NAME: user-post-fastapi
@@ -70,7 +99,7 @@ substitutions:
   _CONTAINER_PORT: '8080'
   
   # Developers ONLY change
-  _VERSION: v1.0
+  _VERSION: v1.1
     
 options:
     substitution_option: 'ALLOW_LOOSE'
