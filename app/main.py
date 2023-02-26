@@ -1,3 +1,4 @@
+import os
 import time
 from . import models
 from typing import Union
@@ -49,4 +50,6 @@ app.include_router(post_router)
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    output_stream = os.popen('echo "World! from $(hostname) and ip: $(hostname -I)"')
+    msg = output_stream.read()
+    return {"Hello": msg}

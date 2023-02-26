@@ -17,18 +17,11 @@ spec:
     spec:
       containers:
       - name: user-post-fastapi
-        image: 79769827852732/user-post-fastapi:1.0.6
+        image: gcr.io/avian-mystery-373417/user-post-fastapi:v1.5
         ports:
         - containerPort: 8080
         env:
-        # - name: DATABASE_URL
-        #   # value: postgresql://userPostgres:passwordPostgres@db:5432/user_post_db
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: user-post-secret
-        #       key: DATABASE_URL
         - name: POSTGRES_USER
-          # value: postgres
           valueFrom:
             secretKeyRef:
               name: user-post-secret
