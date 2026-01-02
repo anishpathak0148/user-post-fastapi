@@ -2,8 +2,8 @@ version: '3'
 
 services:
   api:
-    # image: 79769827852732/${CONTAINER_NAME}:${TAG}
-    image: gcr.io/${PROJECT_ID}/${CONTAINER_NAME}:${TAG}
+    image: 79769827852732/${CONTAINER_NAME}:${TAG}
+    # image: gcr.io/${PROJECT_ID}/${CONTAINER_NAME}:${TAG}
     build: .
     volumes:
       - .:/code
