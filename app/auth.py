@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import Union
 
-from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi import Depends, APIRouter, HTTPException, logger, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt

@@ -12,13 +12,13 @@ class Post(PostBase):
     user_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PostResponse(PostBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class AllPostResponse(BaseModel):
