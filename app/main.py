@@ -3,6 +3,7 @@ import time
 from . import models
 from typing import Union
 
+import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, SessionLocal
@@ -13,6 +14,13 @@ from app.auth import router as auth_router
 app = FastAPI()
 
 models.Base.metadata.create_all(bind=engine)
+
+# Centralized logging configuration so module loggers obey the level
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 # Dependency
 def get_db():

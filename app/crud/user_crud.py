@@ -1,4 +1,3 @@
-from asyncio.log import logger
 from sqlalchemy.orm import Session
 from app import models
 from app.helper.utils import get_hashed_password
@@ -17,7 +16,6 @@ def get_user_by_email(db: Session, email: str):
 
 def get_users(db: Session, offset: int = 0, limit: int = 100):
     users =  db.query(models.User).offset(offset).limit(limit).all()
-    logger.info(f"Users from crud operation: {users}")
     return users
 
 

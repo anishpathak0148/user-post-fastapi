@@ -89,6 +89,13 @@ def update_post(
             status_code=404,
             detail = f"Post with id: {id} not found."
         )
+    
+    user_id = current_user.id
+    if post_data.user_id != user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized! You are not allowed to update this post."
+        )
     updated_post = post_crud.update_post(db=db, id=id, post=payload)
     return updated_post
 
@@ -110,4 +117,38 @@ def delete_post(
             status_code=404,
             detail = f"Post with id: {id} not found."
         )
+    
+    user_id = current_user.id
+    if post_data.user_id != user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized! You are not allowed to delete this post."
+        )
     return post_crud.delete_post(db=db, id=id)
+
+
+@router.post(
+    "/posts/{id}/like",
+    status_code=status.HTTP_200_OK,
+    description="like a post"
+)
+def like_post(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    post_data = post_crud.get_post_by_id(db, id)
+    if post_data is None:
+        raise HTTPException(
+            status_code=404,
+            detail = f"Post with id: {id} not found."
+        )
+    user_id = current_user.id
+    try:
+        post_crud.like_post(db=db, post_id=id, user_id=user_id)
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=str(e)
+        )
+    return {"message": f"Post with id: {id} liked successfully."}

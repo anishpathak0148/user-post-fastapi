@@ -1,9 +1,10 @@
 import os
+import logging
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import Union
 
-from fastapi import Depends, APIRouter, HTTPException, logger, status
+from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -14,6 +15,7 @@ from app.schema.auth_schema import Token, TokenData
 from app.crud import user_crud
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -66,7 +68,7 @@ async def get_current_user(
             raise credentials_exception
         token_data = TokenData(username=username)
     except JWTError as e:
-        logger.info(f"got exception due to: {e}")
+        logger.error(f"got exception due to: {e}")
         raise credentials_exception
     user_dict = user_crud.get_user_by_email(db=db, email=token_data.username)
     if user_dict is None:

@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import APIRouter, status, Depends, HTTPException
@@ -6,6 +7,9 @@ from app.dependencies import get_db
 from app.crud import user_crud
 from app.schema import user as user_schema
 from app.auth import get_current_active_user
+
+# Create a logger instance (configured centrally in app.main)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/users",
@@ -25,7 +29,7 @@ def get_all_users(
     db: Session = Depends(get_db)
 ):
     users = user_crud.get_users(db, offset=offset, limit=limit)
-    print(f"User list is: {users}")
+    logger.info("User list response: %s", [user.to_dict() for user in users])
     return users
 
 
@@ -39,6 +43,9 @@ def get_user(
     db: Session = Depends(get_db)
 ):
     user = user_crud.get_user(db, user_id=id)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User Not Found")
+    logger.info("User detail response: %s", user.to_dict())
     return user
 
 

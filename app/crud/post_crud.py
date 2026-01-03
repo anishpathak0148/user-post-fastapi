@@ -22,7 +22,6 @@ def update_post(db: Session, post: post_schema.PostBase, id: int):
     db_post = db.query(models.Post).filter(models.Post.id == id).first()
     db_post.title = post.title
     db_post.description = post.description
-    db_post.likes = post.likes
 
     db.add(db_post)
     db.commit()
@@ -33,4 +32,16 @@ def delete_post(db: Session, id: int):
     db_post = db.query(models.Post).filter(models.Post.id == id).first()
     db.delete(db_post)
     db.commit()
-    return None
+    return "Post deleted successfully."
+
+def like_post(db: Session, post_id: int, user_id: int):
+    db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    if str(user_id) in db_post.likes:
+        raise Exception("User has already liked this post.")
+    db_post.likes.append(str(user_id))
+    db_post.likes_count += 1
+
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
