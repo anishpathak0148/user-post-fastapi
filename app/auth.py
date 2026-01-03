@@ -1,18 +1,19 @@
-import os
 import logging
-from dotenv import load_dotenv
+import os
 from datetime import datetime, timedelta
 from typing import Union
 
-from fastapi import Depends, APIRouter, HTTPException, status
-from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-from app.helper.utils import verify_password
-from app.dependencies import get_db
-from app.schema.user import User
-from app.schema.auth_schema import Token, TokenData
+from sqlalchemy.orm import Session
+
 from app.crud import user_crud
+from app.dependencies import get_db
+from app.helper.utils import verify_password
+from app.schema.auth_schema import Token, TokenData
+from app.schema.user import User
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -38,8 +39,14 @@ def authenticate_user(db, username: str, password: str):
         return False
     if not verify_password(password, user_dict.hashed_password):
         return False
-    user = User(id=user_dict.id, name=user_dict.name, email=user_dict.email, is_active=user_dict.is_active)
+    user = User(
+        id=user_dict.id,
+        name=user_dict.name,
+        email=user_dict.email,
+        is_active=user_dict.is_active,
+    )
     return user
+
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
@@ -53,8 +60,7 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
 
 
 async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -73,7 +79,12 @@ async def get_current_user(
     user_dict = user_crud.get_user_by_email(db=db, email=token_data.username)
     if user_dict is None:
         raise credentials_exception
-    user = User(id=user_dict.id, name=user_dict.name, email=user_dict.email, is_active=user_dict.is_active)
+    user = User(
+        id=user_dict.id,
+        name=user_dict.name,
+        email=user_dict.email,
+        is_active=user_dict.is_active,
+    )
     return user
 
 
@@ -85,8 +96,7 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 
 @router.post("/token", response_model=Token)
 async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -95,7 +105,7 @@ async def login(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes= int(ACCESS_TOKEN_EXPIRE_MINUTES))
+    access_token_expires = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )

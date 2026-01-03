@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, TEXT
+from sqlalchemy import TEXT, Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import relationship
@@ -30,7 +30,11 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, unique=True, index=True,)
+    title = Column(
+        String,
+        unique=True,
+        index=True,
+    )
     description = Column(TEXT)
     likes_count = Column(Integer, default=0)
 
@@ -38,7 +42,7 @@ class Post(Base):
     likes = Column(MutableList.as_mutable(JSON), default=list)
 
     user_id = Column(Integer, ForeignKey("user_table.id"))
-    
+
     owner = relationship("User", back_populates="posts")
 
     def to_dict(self):
