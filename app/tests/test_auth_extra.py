@@ -8,10 +8,12 @@ from app import auth as auth_module
 
 def test_authenticate_user_and_token(db_session):
     # create a user to authenticate
-    from app.helper.utils import get_hashed_password
     from app import models
+    from app.helper.utils import get_hashed_password
 
-    u = models.User(name="auth", email="auth@example.com", hashed_password=get_hashed_password("pw"))
+    u = models.User(
+        name="auth", email="auth@example.com", hashed_password=get_hashed_password("pw")
+    )
     db_session.add(u)
     db_session.commit()
     db_session.refresh(u)
@@ -30,5 +32,7 @@ def test_create_access_token_and_decode(monkeypatch):
 
     token = auth_module.create_access_token({"sub": "me@example.com"})
     assert isinstance(token, str)
-    decoded = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms=[os.getenv("ALGORITHM")])
+    decoded = jwt.decode(
+        token, os.getenv("SECRET_KEY"), algorithms=[os.getenv("ALGORITHM")]
+    )
     assert decoded.get("sub") == "me@example.com"

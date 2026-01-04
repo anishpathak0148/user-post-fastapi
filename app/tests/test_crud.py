@@ -1,10 +1,9 @@
-from app.crud import user_crud, post_crud
-from app.schema.user import UserCreate
-from app.schema.post import PostBase
-from app import models
-
-
 import uuid
+
+from app import models
+from app.crud import post_crud, user_crud
+from app.schema.post import PostBase
+from app.schema.user import UserCreate
 
 
 def test_user_crud_operations(db_session):
@@ -26,7 +25,9 @@ def test_user_crud_operations(db_session):
     assert any(u.email == created_email for u in users)
 
     # update user
-    new_payload = UserCreate(name="Alice B", email="aliceb@example.com", password="newpass")
+    new_payload = UserCreate(
+        name="Alice B", email="aliceb@example.com", password="newpass"
+    )
     updated = user_crud.update_user(db_session, user_id=user.id, user=new_payload)
     assert updated.email == "aliceb@example.com"
 
@@ -34,7 +35,9 @@ def test_user_crud_operations(db_session):
 def test_post_crud_operations(db_session):
     # create a user for post ownership
     unique = uuid.uuid4().hex
-    user = models.User(name="Poster", email=f"poster+{unique}@example.com", hashed_password="x")
+    user = models.User(
+        name="Poster", email=f"poster+{unique}@example.com", hashed_password="x"
+    )
     db_session.add(user)
     db_session.commit()
     db_session.refresh(user)

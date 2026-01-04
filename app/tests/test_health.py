@@ -1,5 +1,8 @@
-from httpx import AsyncClient
+from app.main import app
+from fastapi.testclient import TestClient
 import pytest
+from httpx import AsyncClient
+
 
 @pytest.mark.asyncio
 async def test_health(async_client: AsyncClient):
@@ -9,13 +12,12 @@ async def test_health(async_client: AsyncClient):
 
 
 # Testing sync endpoints (if we don’t want async)
-from fastapi.testclient import TestClient
-from app.main import app
+
 
 client = TestClient(app)
+
 
 def test_health_sync():
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
-

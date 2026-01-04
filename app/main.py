@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.post import router as post_router
 from app.api.user import router as user_router
 from app.auth import router as auth_router
-from app.database import SessionLocal, engine
+from app.database import engine
 
 from . import models
 
@@ -20,6 +20,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
 
 @app.on_event("startup")
 def startup():

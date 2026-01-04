@@ -4,7 +4,11 @@ import uuid
 def test_user_api_create_and_list(client):
     # create a user via API with unique email
     unique = uuid.uuid4().hex
-    payload = {"name": "API User", "email": f"apiuser+{unique}@example.com", "password": "pw"}
+    payload = {
+        "name": "API User",
+        "email": f"apiuser+{unique}@example.com",
+        "password": "pw",
+    }
     resp = client.post("/users", json=payload)
     assert resp.status_code == 201
     body = resp.json()

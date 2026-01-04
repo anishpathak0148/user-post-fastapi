@@ -14,12 +14,21 @@ def test_create_post_user_not_exist(client):
     def fake_user():
         return PydUser(id=99999, name="no", email="no@example.com", is_active=True)
 
-    fastapi_app.dependency_overrides[__import__("app.auth", fromlist=["get_current_active_user"]).get_current_active_user] = fake_user
+    fastapi_app.dependency_overrides[
+        __import__(
+            "app.auth", fromlist=["get_current_active_user"]
+        ).get_current_active_user
+    ] = fake_user
     try:
         resp = client.post("/posts", json={"title": "no-user", "description": "x"})
         assert resp.status_code == 400
     finally:
-        fastapi_app.dependency_overrides.pop(__import__("app.auth", fromlist=["get_current_active_user"]).get_current_active_user, None)
+        fastapi_app.dependency_overrides.pop(
+            __import__(
+                "app.auth", fromlist=["get_current_active_user"]
+            ).get_current_active_user,
+            None,
+        )
 
 
 def test_update_post_unauthorized(db_session, client):
@@ -38,14 +47,25 @@ def test_update_post_unauthorized(db_session, client):
     from app.main import app as fastapi_app
 
     def other_user():
-        return PydUser(id=owner.id + 1, name="other", email="other@example.com", is_active=True)
+        return PydUser(
+            id=owner.id + 1, name="other", email="other@example.com", is_active=True
+        )
 
-    fastapi_app.dependency_overrides[__import__("app.auth", fromlist=["get_current_active_user"]).get_current_active_user] = other_user
+    fastapi_app.dependency_overrides[
+        __import__(
+            "app.auth", fromlist=["get_current_active_user"]
+        ).get_current_active_user
+    ] = other_user
     try:
         resp = client.put(f"/posts/{post.id}", json={"title": "X", "description": "Y"})
         assert resp.status_code == 401
     finally:
-        fastapi_app.dependency_overrides.pop(__import__("app.auth", fromlist=["get_current_active_user"]).get_current_active_user, None)
+        fastapi_app.dependency_overrides.pop(
+            __import__(
+                "app.auth", fromlist=["get_current_active_user"]
+            ).get_current_active_user,
+            None,
+        )
 
 
 def test_like_post_already_liked(db_session, client):
@@ -55,7 +75,13 @@ def test_like_post_already_liked(db_session, client):
     db_session.commit()
     db_session.refresh(user)
 
-    post = models.Post(title="LikedPost", description="d", user_id=user.id, likes=[str(user.id)], likes_count=1)
+    post = models.Post(
+        title="LikedPost",
+        description="d",
+        user_id=user.id,
+        likes=[str(user.id)],
+        likes_count=1,
+    )
     db_session.add(post)
     db_session.commit()
     db_session.refresh(post)
@@ -66,9 +92,18 @@ def test_like_post_already_liked(db_session, client):
     def this_user():
         return PydUser(id=user.id, name=user.name, email=user.email, is_active=True)
 
-    fastapi_app.dependency_overrides[__import__("app.auth", fromlist=["get_current_active_user"]).get_current_active_user] = this_user
+    fastapi_app.dependency_overrides[
+        __import__(
+            "app.auth", fromlist=["get_current_active_user"]
+        ).get_current_active_user
+    ] = this_user
     try:
         like_resp = client.post(f"/posts/posts/{post.id}/like")
         assert like_resp.status_code == 400
     finally:
-        fastapi_app.dependency_overrides.pop(__import__("app.auth", fromlist=["get_current_active_user"]).get_current_active_user, None)
+        fastapi_app.dependency_overrides.pop(
+            __import__(
+                "app.auth", fromlist=["get_current_active_user"]
+            ).get_current_active_user,
+            None,
+        )

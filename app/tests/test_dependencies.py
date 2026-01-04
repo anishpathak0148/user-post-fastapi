@@ -1,5 +1,6 @@
-from app.dependencies import get_db
 from sqlalchemy.orm import Session
+
+from app.dependencies import get_db
 
 
 def test_get_db_generator():

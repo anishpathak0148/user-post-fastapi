@@ -18,7 +18,7 @@ pytest \
   --cov=app \
   --cov-report=term-missing \
   --cov-report=html \
-  tests/
+  app/tests/
 
 echo "✅ Tests completed successfully"
 echo "📊 Coverage HTML report generated at: htmlcov/index.html"

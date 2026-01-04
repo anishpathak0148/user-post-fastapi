@@ -1,19 +1,19 @@
+from httpx import ASGITransport, AsyncClient
+import uuid
+
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from fastapi.testclient import TestClient
-
-from app.database import Base
 from app import models
-from app.main import app
-from app.dependencies import get_db
 from app.auth import get_current_active_user
+from app.database import Base
+from app.dependencies import get_db
 from app.helper.utils import get_hashed_password
-import uuid
+from app.main import app
 from app.schema.user import User as PydUser
-
 
 TEST_DATABASE_URL = "sqlite:///:memory:"
 
@@ -59,7 +59,10 @@ def client(db_session):
     db_session.refresh(test_user)
 
     pyd_user = PydUser(
-        id=test_user.id, name=test_user.name, email=test_user.email, is_active=test_user.is_active
+        id=test_user.id,
+        name=test_user.name,
+        email=test_user.email,
+        is_active=test_user.is_active,
     )
 
     def override_get_db():
@@ -83,14 +86,9 @@ def client(db_session):
     app.dependency_overrides.pop(get_current_active_user, None)
 
 
-from httpx import AsyncClient, ASGITransport
-
 @pytest.fixture
 async def async_client():
     transport = ASGITransport(app=app)
 
-    async with AsyncClient(
-        transport=transport,
-        base_url="http://test"
-    ) as client:
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
         yield client
