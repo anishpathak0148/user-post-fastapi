@@ -6,8 +6,10 @@ autoflake==2.3.1
 autopep8==2.3.2
 bcrypt==3.2.2
 black==25.12.0
+certifi==2026.1.4
 cffi==2.0.0
 click==8.3.1
+coverage==7.13.1
 cryptography==46.0.3
 ecdsa==0.19.1
 fastapi==0.128.0
@@ -15,8 +17,11 @@ FastAPI-SQLAlchemy==0.2.1
 flake8==7.3.0
 greenlet==3.3.0
 h11==0.16.0
+httpcore==1.0.9
 httptools==0.7.1
+httpx==0.28.1
 idna==3.11
+iniconfig==2.3.0
 isort==7.0.0
 Mako==1.3.10
 MarkupSafe==3.0.3
@@ -26,6 +31,7 @@ packaging==25.0
 passlib==1.7.4
 pathspec==0.12.1
 platformdirs==4.5.1
+pluggy==1.6.0
 psycopg2-binary==2.9.11
 pyasn1==0.6.1
 pycodestyle==2.14.0
@@ -33,6 +39,10 @@ pycparser==2.23
 pydantic==2.12.5
 pydantic_core==2.41.5
 pyflakes==3.4.0
+Pygments==2.19.2
+pytest==9.0.2
+pytest-asyncio==1.3.0
+pytest-cov==7.0.0
 python-dotenv==1.2.1
 python-jose==3.5.0
 python-multipart==0.0.21
