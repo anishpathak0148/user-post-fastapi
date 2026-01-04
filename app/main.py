@@ -14,8 +14,6 @@ from . import models
 
 app = FastAPI()
 
-models.Base.metadata.create_all(bind=engine)
-
 # Centralized logging configuration so module loggers obey the level
 logging.basicConfig(
     level=logging.INFO,
@@ -23,14 +21,18 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+@app.on_event("startup")
+def startup():
+    models.Base.metadata.create_all(bind=engine)
+
 
 # Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
 
 
 origins = [
@@ -66,3 +68,14 @@ def read_root():
     output_stream = os.popen('echo "World! from $(hostname) and ip: $(hostname -I)"')
     msg = output_stream.read()
     return {"Hello": msg}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True, log_level="info")
