@@ -1,15 +1,16 @@
+import logging
 import os
 import time
-from . import models
-from typing import Union
 
-import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine, SessionLocal
-from app.api.user import router as user_router
+
 from app.api.post import router as post_router
+from app.api.user import router as user_router
 from app.auth import router as auth_router
+from app.database import SessionLocal, engine
+
+from . import models
 
 app = FastAPI()
 
@@ -22,6 +23,7 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -29,6 +31,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 origins = [
     "http://localhost",
@@ -43,6 +46,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
@@ -50,6 +54,7 @@ async def add_process_time_header(request: Request, call_next):
     process_time = time.time() - start_time
     response.headers["response_time"] = f"{process_time} sec"
     return response
+
 
 app.include_router(auth_router)
 app.include_router(user_router)
