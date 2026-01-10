@@ -1,4 +1,4 @@
-FROM python:3.14.2-slim
+FROM python:3.12.2-slim
 
 WORKDIR /code
 
