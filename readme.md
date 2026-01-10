@@ -14,3 +14,13 @@
 
 ## To access postgres inside kuberbetes pod:
     psql -h localhost -p 5432 -U postgres
+
+ ## For alembic migration:
+    - To initilize alembic first time:
+        alembic init alembic
+    - Create migration revision:
+        alembic revision --autogenerate -m "revision message"
+    - Apply migration:
+        alembic upgrade head
+    - For Rollback (Downgrade the migration commit):
+        alembic downgrade -1
