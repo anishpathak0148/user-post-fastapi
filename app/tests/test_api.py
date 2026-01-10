@@ -7,7 +7,7 @@ def test_user_api_create_and_list(client):
     payload = {
         "name": "API User",
         "email": f"apiuser+{unique}@example.com",
-        "password": "pw",
+        "password": "password123",
     }
     resp = client.post("/users", json=payload)
     assert resp.status_code == 201
