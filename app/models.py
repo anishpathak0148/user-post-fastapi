@@ -1,4 +1,4 @@
-from sqlalchemy import TEXT, Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import TEXT, Boolean, Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import relationship
@@ -13,6 +13,9 @@ class User(Base):
     name = Column(String)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    role = Column(
+        Enum("user", "admin", name="user_roles"), nullable=False, server_default="user"
+    )
     is_active = Column(Boolean, default=True)
 
     posts = relationship("Post", back_populates="owner")
@@ -22,6 +25,7 @@ class User(Base):
             "id": self.id,
             "email": self.email,
             "name": self.name,
+            "role": self.role,
             "is_active": self.is_active,
         }
 
